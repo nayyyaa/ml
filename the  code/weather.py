@@ -13,14 +13,14 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
 
-# ----------- تحميل البيانات ------------
+
 df = pd.read_csv("weather_classification_data.csv")
 
-# ----------- عرض الخصائص الإحصائية للبيانات ------------
+
 print("\n=== Statistical Summary ===")
 print(df.describe())
 
-# ----------- Visualize the data before preprocessing ------------
+
 numeric_cols = ['Temperature', 'Humidity', 'Wind Speed', 'Precipitation (%)',
                 'Atmospheric Pressure', 'UV Index', 'Visibility (km)']
 
@@ -38,29 +38,29 @@ plt.tight_layout()
 plt.savefig("weather_violinplots.png")
 plt.show()
 
-# ----------- تحديد الهدف والفيتشرز بشكل صحيح ------------
+
 y = df['Weather Type']
 X = df.drop(columns=['Weather Type', 'Location'])
 
-# ----------- تحويل الأعمدة النصية إلى أرقام ------------
+
 categorical_cols = ['Season', 'Cloud Cover']
 X = pd.get_dummies(X, columns=categorical_cols, drop_first=True)
 
-# ----------- تقسيم البيانات ------------
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-# ----------- حفظ X و Y و X_test و Y_test ------------
+
 X_train.to_csv("X.csv", index=False)
 X_test.to_csv("X_test.csv", index=False)
 y_train.to_csv("Y.csv", index=False)
 y_test.to_csv("Y_test.csv", index=False)
 
-# ----------- تطبيع البيانات ------------
+
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# ----------- النماذج ------------
+
 models = {
     "Logistic Regression": LogisticRegression(max_iter=1000),
     "KNN": KNeighborsClassifier(n_neighbors=3),
@@ -73,7 +73,7 @@ models = {
 
 accuracy_list = []
 
-# ----------- تدريب وتقييم النماذج وحفظ التوقعات ------------
+
 for name, model in models.items():
     print(f"\n==== {name} ====")
 
@@ -91,10 +91,10 @@ for name, model in models.items():
     print(f"Accuracy: {acc:.4f}")
     print(report)
 
-    # حفظ التوقعات
+    
     pd.DataFrame(preds, columns=["Prediction"]).to_csv(f"predictions_{name.replace(' ', '_')}.csv", index=False)
 
-# ----------- رسم دقة النماذج ------------
+
 accuracy_df = pd.DataFrame(accuracy_list, columns=["Model", "Accuracy"])
 sns.barplot(data=accuracy_df, x='Model', y='Accuracy', palette='viridis')
 plt.xticks(rotation=45)
